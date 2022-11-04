@@ -18,3 +18,8 @@ My GameOff 2022 submission.
 
 You'll have to help Diddi abandon the Confidence before it collapses. Avoid dangerous
 zones, and reach out the escape pods to survive!
+
+## Game engine
+
+I'm using [Python](https://python.org) (3.7 and higher) and the [Pyxel](https://github.com/kitao/pyxel)
+package to operate the game, graphics, etc.
