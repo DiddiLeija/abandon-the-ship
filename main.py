@@ -1,6 +1,31 @@
 import pyxel
 
 
+class Diddi:
+    "The hero of this game."
+
+    def __init__(self):
+        # Coordinates
+        self.x, self.y = 0, 0
+        # The position of each aspect,
+        # ordered by situation
+        self.aspects = {
+            # [D]eath
+            "d": ((0, 8) for i in range(3)),
+            # [R]ight-facing
+            "r": ((8, 0), (16, 0), (24, 0)),
+            # [L]eft-facing
+            "l": ((8, 8), (16, 8), (24, 8)),
+        }
+        self.size = 8
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
+
+
 class App:
     "The main class that puts everything together."
 
@@ -43,6 +68,7 @@ class App:
 
     def setup_game(self):
         self.playing = True
+        self.game_hero = Diddi()
 
     def update_game(self):
         pass
