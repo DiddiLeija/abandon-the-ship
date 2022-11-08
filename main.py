@@ -1,6 +1,28 @@
 import pyxel
 
+# Variables that help us identify certain
+# elements (set up without any class, so
+# they can be accessed anywhere)
+FLOOR_IMAGES = (
+    (32, 0),
+    (32, 8),
+    (40, 0),
+    (40, 8),
+    (48, 0),
+    (48, 8),
+    (56, 0),
+    (56, 8)
+)
+FIRE_IMAGES = (
+    (0, 16),
+    (0, 24),
+    (8, 16),
+    (8, 24)
+)
+TRANSPARENT_COLOR = 0
 
+
+# Diddi class
 class Diddi:
     "The hero of this game."
 
@@ -26,6 +48,7 @@ class Diddi:
         pass
 
 
+# Main app class
 class App:
     "The main class that puts everything together."
 
