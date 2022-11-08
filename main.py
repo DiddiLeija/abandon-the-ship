@@ -36,8 +36,8 @@ class App:
         self.startup()
 
     def startup(self):
-        self.setup_menu_vars()
-        pyxel.run(self.update, self.run)
+        self.setup_menu()
+        pyxel.run(self.update, self.draw)
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
