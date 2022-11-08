@@ -21,6 +21,61 @@ FIRE_IMAGES = (
 )
 TRANSPARENT_COLOR = 0
 
+# Functions to detect collisions/interactions
+# (Some functions are based on work from Pyxel's
+# examples, by Takashi Kitao)
+WALL_TILE_X = 4
+
+def prepare_coords(x, y):
+    x1 = x // 8
+    y1 = y // 8
+    x2 = (x + 8 - 1) // 8
+    y2 = (y + 8 - 1) // 8
+    return x1, x2, y1, y2
+
+def get_tile(tile_x, tile_y):
+    return pyxel.tilemap(0).pget(tile_x, tile_y)
+
+def detect_collision(x, y, dy):
+    "Check if you hit with something."
+    x1, x2, y1, y2 = prepare_coords(x, y)
+    for yi in range(y1, y2 + 1):
+        for xi in range(x1, x2 + 1):
+            if get_tile(xi, yi)[0] >= WALL_TILE_X:
+                return True
+    if dy > 0 and y % 8 == 1:
+        for xi in range(x1, x2 + 1):
+            if get_tile(xi, y1 + 1) in FLOOR_IMAGES:
+                return True
+    return False
+
+def push_back(x, y, dx, dy):
+    abs_dx = abs(dx)
+    abs_dy = abs(dy)
+    if abs_dx > abs_dy:
+        sign = 1 if dx > 0 else -1
+        for _ in range(abs_dx):
+            if detect_collision(x + sign, y, dy):
+                break
+            x += sign
+        sign = 1 if dy > 0 else -1
+        for _ in range(abs_dy):
+            if detect_collision(x, y + sign, dy):
+                break
+            y += sign
+    else:
+        sign = 1 if dy > 0 else -1
+        for _ in range(abs_dy):
+            if detect_collision(x, y + sign, dy):
+                break
+            y += sign
+        sign = 1 if dx > 0 else -1
+        for _ in range(abs_dx):
+            if detect_collision(x + sign, y, dy):
+                break
+            x += sign
+    return x, y, dx, dy
+
 
 # Diddi class
 class Diddi:
