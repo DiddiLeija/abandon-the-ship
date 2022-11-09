@@ -1,3 +1,5 @@
+import random
+
 import pyxel
 
 # Variables that help us identify certain
@@ -24,6 +26,7 @@ TRANSPARENT_COLOR = 0
 # Functions to detect collisions/interactions
 # (Some functions are based on work from Pyxel's
 # examples, by Takashi Kitao)
+SCROLL_BORDER_X = 80
 WALL_TILE_X = 4
 
 def prepare_coords(x, y):
@@ -83,7 +86,7 @@ class Diddi:
 
     def __init__(self):
         # Coordinates
-        self.x, self.y = 0, 0
+        self.x, self.y, self.dx, self.dy = 0, 0, 0, 0
         # The position of each aspect,
         # ordered by situation
         self.aspects = {
@@ -94,13 +97,47 @@ class Diddi:
             # [L]eft-facing
             "l": ((8, 8), (16, 8), (24, 8)),
         }
+        self.alive = True
+        self.falling = False
+        self.r_facing = True  # True = right, False = left
         self.size = 8
 
     def update(self):
-        pass
+        global scroll_x
+        last_y = self.y
+        if pyxel.btn(pyxel.KEY_LEFT):
+            self.dx = -2
+            self.r_facing = False
+        if pyxel.btn(pyxel.KEY_RIGHT):
+            self.dx = 2
+            self.r_facing = True
+
+        self.dy = min(self.dy + 1, 3)
+        self.x, self.y, self.dx, self.dy = push_back(self.x, self.y, self.dx, self.dy)
+        if self.x < scroll_x:
+            self.x = scroll_x
+        if self.y < 0:
+            self.y = 0
+        self.dx = int(self.dx * 0.8)
+        self.falling = self.y > last_y
+
+        if self.x > scroll_x + SCROLL_BORDER_X:
+            last_scroll_x = scroll_x
+            scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
 
     def draw(self):
-        pass
+        if self.falling:
+            situation = 2
+        else:
+            situation = random.choice([0, 1])
+        if not self.alive:
+            face = "d"
+        elif self.r_facing:
+            face = "r"
+        else:
+            face = "l"
+        img_x, img_y = self.aspects[face][situation]
+        pyxel.blt(self.x, self.y, 0, img_x, img_y, 8, 8, 0)
 
 
 # Main app class
@@ -149,14 +186,14 @@ class App:
         self.game_hero = Diddi()
 
     def update_game(self):
-        pass
+        self.game_hero.update()
 
     def draw_game(self):
-        pass
+        self.game_hero.draw()
 
 
 if __name__ == '__main__':
     # Initialize Pyxel here, not before!
-    pyxel.init(180, 180, title="Abandon the ship!")
+    pyxel.init(110, 110, title="Abandon the ship!")
     # Call the App() class, which will make all the job
     App()
