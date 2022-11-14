@@ -112,7 +112,7 @@ class Diddi:
         self.falling = self.y > last_y
 
         if self.x > self.scroll_x + SCROLL_BORDER_X:
-            last_scroll_x = self.scroll_x
+            self.scroll_x = self.scroll_x
             self.scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
 
     def draw(self):

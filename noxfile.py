@@ -21,17 +21,6 @@ def lint(session):
     session.install("-r", "requirements.txt")
     session.install("-r", "requirements-lint.txt")
     # Run linters
-    session.run(
-        "flake8",
-        *file_list,
-        "--max-line-length=127",
-        # The "ignore" instruction above
-        # was added because of "last_scroll_x".
-        # I'm still adapting a few things, so
-        # let's ignore that for now.
-        #
-        # TODO: Eventually, remove that "ignore"!
-        "--ignore=F841"
-    )
+    session.run("flake8", *file_list, "--max-line-length=127")
     session.run("isort", "--check-only", *file_list)
     session.run("black", "--check", *file_list)
