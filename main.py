@@ -168,6 +168,8 @@ class App:
 
     def draw_menu(self):
         pyxel.cls(0)
+        # Draw the decorative tilemap
+        pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
 
     # Game functions
 
@@ -185,6 +187,6 @@ class App:
 
 if __name__ == "__main__":
     # Initialize Pyxel here, not before!
-    pyxel.init(110, 110, title="Abandon the ship!")
+    pyxel.init(128, 128, title="Abandon the ship!")
     # Call the App() class, which will make all the job
     App()
