@@ -170,6 +170,8 @@ class App:
         pyxel.cls(0)
         # Draw the decorative tilemap
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
+        pyxel.text(30, 35, "Abandon the ship!", 1)
+        pyxel.text(31, 35, "Abandon the ship!", 7)
 
     # Game functions
 
