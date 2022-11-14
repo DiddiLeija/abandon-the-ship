@@ -91,9 +91,9 @@ class Diddi:
         self.falling = False
         self.r_facing = True  # True = right, False = left
         self.size = 8
+        self.scroll_x = 0
 
     def update(self):
-        global scroll_x
         last_y = self.y
         if pyxel.btn(pyxel.KEY_LEFT):
             self.dx = -2
@@ -104,16 +104,16 @@ class Diddi:
 
         self.dy = min(self.dy + 1, 3)
         self.x, self.y, self.dx, self.dy = push_back(self.x, self.y, self.dx, self.dy)
-        if self.x < scroll_x:
-            self.x = scroll_x
+        if self.x < self.scroll_x:
+            self.x = self.scroll_x
         if self.y < 0:
             self.y = 0
         self.dx = int(self.dx * 0.8)
         self.falling = self.y > last_y
 
-        if self.x > scroll_x + SCROLL_BORDER_X:
-            last_scroll_x = scroll_x
-            scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
+        if self.x > self.scroll_x + SCROLL_BORDER_X:
+            last_scroll_x = self.scroll_x
+            self.scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
 
     def draw(self):
         if self.falling:
@@ -167,7 +167,7 @@ class App:
         pass
 
     def draw_menu(self):
-        pass
+        pyxel.cls(0)
 
     # Game functions
 
@@ -179,6 +179,7 @@ class App:
         self.game_hero.update()
 
     def draw_game(self):
+        pyxel.cls(0)
         self.game_hero.draw()
 
 
