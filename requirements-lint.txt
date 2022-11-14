@@ -1,0 +1,5 @@
+# TODO: Set specific versions for the linting packages!
+
+black
+isort
+flake8

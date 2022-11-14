@@ -5,22 +5,8 @@ import pyxel
 # Variables that help us identify certain
 # elements (set up without any class, so
 # they can be accessed anywhere)
-FLOOR_IMAGES = (
-    (32, 0),
-    (32, 8),
-    (40, 0),
-    (40, 8),
-    (48, 0),
-    (48, 8),
-    (56, 0),
-    (56, 8)
-)
-FIRE_IMAGES = (
-    (0, 16),
-    (0, 24),
-    (8, 16),
-    (8, 24)
-)
+FLOOR_IMAGES = ((32, 0), (32, 8), (40, 0), (40, 8), (48, 0), (48, 8), (56, 0), (56, 8))
+FIRE_IMAGES = ((0, 16), (0, 24), (8, 16), (8, 24))
 TRANSPARENT_COLOR = 0
 
 # Functions to detect collisions/interactions
@@ -29,6 +15,7 @@ TRANSPARENT_COLOR = 0
 SCROLL_BORDER_X = 80
 WALL_TILE_X = 4
 
+
 def prepare_coords(x, y):
     x1 = x // 8
     y1 = y // 8
@@ -36,8 +23,10 @@ def prepare_coords(x, y):
     y2 = (y + 8 - 1) // 8
     return x1, x2, y1, y2
 
+
 def get_tile(tile_x, tile_y):
     return pyxel.tilemap(0).pget(tile_x, tile_y)
+
 
 def detect_collision(x, y, dy):
     "Check if you hit with something."
@@ -51,6 +40,7 @@ def detect_collision(x, y, dy):
             if get_tile(xi, y1 + 1) in FLOOR_IMAGES:
                 return True
     return False
+
 
 def push_back(x, y, dx, dy):
     abs_dx = abs(dx)
@@ -192,7 +182,7 @@ class App:
         self.game_hero.draw()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Initialize Pyxel here, not before!
     pyxel.init(110, 110, title="Abandon the ship!")
     # Call the App() class, which will make all the job
