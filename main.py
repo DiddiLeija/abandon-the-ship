@@ -194,6 +194,19 @@ class App:
             # [C]redits
             pyxel.text(30, 65, "[C]redits", 1)
             pyxel.text(31, 65, "[C]redits", 7)
+        elif self.menu_g:
+            # Display a guide
+            pyxel.text(30, 35, "== How to play ==", 1)
+            pyxel.text(31, 35, "== How to play ==", 7)
+            # Diddi's controls
+            pyxel.text(30, 45, "Left key - Left", 1)
+            pyxel.text(31, 45, "Left key - Left", 7)
+            pyxel.text(30, 55, "Right key - Right", 1)
+            pyxel.text(31, 55, "Right key - Right", 7)
+        elif self.menu_c:
+            # Display a small credits sequence
+            pyxel.text(30, 35, "== Credits ==", 1)
+            pyxel.text(31, 35, "== Credits ==", 7)
         # [Q]uit (always available)
         pyxel.text(30, 90, "Press Q to quit", 1)
         pyxel.text(31, 90, "Press Q to quit", 7)
