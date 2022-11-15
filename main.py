@@ -95,10 +95,10 @@ class Diddi:
 
     def update(self):
         last_y = self.y
-        if pyxel.btn(pyxel.KEY_LEFT):
+        if pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.KEY_A):
             self.dx = -2
             self.r_facing = False
-        if pyxel.btn(pyxel.KEY_RIGHT):
+        if pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.KEY_D):
             self.dx = 2
             self.r_facing = True
 
