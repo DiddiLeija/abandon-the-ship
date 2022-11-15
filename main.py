@@ -164,14 +164,36 @@ class App:
         self.playing = False
 
     def update_menu(self):
-        pass
+        if pyxel.btnp(pyxel.KEY_P):
+            # [P]lay
+            self.setup_game()
+        elif pyxel.btnp(pyxel.KEY_G):
+            # [G]uide
+            pass
+        elif pyxel.btnp(pyxel.KEY_C):
+            # [C]redits
+            pass
 
     def draw_menu(self):
         pyxel.cls(0)
         # Draw the decorative tilemap
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
+        # Display title
         pyxel.text(30, 35, "Abandon the ship!", 1)
         pyxel.text(31, 35, "Abandon the ship!", 7)
+        # Display options:
+        # [P]lay
+        pyxel.text(30, 45, "[P]lay", 1)
+        pyxel.text(31, 45, "[P]lay", 7)
+        # [G]uide
+        pyxel.text(30, 55, "[G]uide", 1)
+        pyxel.text(31, 55, "[G]uide", 7)
+        # [C]redits
+        pyxel.text(30, 65, "[C]redits", 1)
+        pyxel.text(31, 65, "[C]redits", 7)
+        # [Q]uit
+        pyxel.text(30, 85, "Press Q to quit", 1)
+        pyxel.text(31, 85, "Press Q to quit", 7)
 
     # Game functions
 
