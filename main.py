@@ -162,38 +162,41 @@ class App:
 
     def setup_menu(self):
         self.playing = False
+        self.menu_c = False
+        self.menu_g = False
 
     def update_menu(self):
         if pyxel.btnp(pyxel.KEY_P):
             # [P]lay
             self.setup_game()
-        elif pyxel.btnp(pyxel.KEY_G):
+        elif pyxel.btnp(pyxel.KEY_G) and not self.menu_c:
             # [G]uide
-            pass
-        elif pyxel.btnp(pyxel.KEY_C):
+            self.menu_g = not self.menu_g
+        elif pyxel.btnp(pyxel.KEY_C) and not self.menu_g:
             # [C]redits
-            pass
+            self.menu_c = not self.menu_c
 
     def draw_menu(self):
         pyxel.cls(0)
         # Draw the decorative tilemap
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
-        # Display title
-        pyxel.text(30, 35, "Abandon the ship!", 1)
-        pyxel.text(31, 35, "Abandon the ship!", 7)
-        # Display options:
-        # [P]lay
-        pyxel.text(30, 45, "[P]lay", 1)
-        pyxel.text(31, 45, "[P]lay", 7)
-        # [G]uide
-        pyxel.text(30, 55, "[G]uide", 1)
-        pyxel.text(31, 55, "[G]uide", 7)
-        # [C]redits
-        pyxel.text(30, 65, "[C]redits", 1)
-        pyxel.text(31, 65, "[C]redits", 7)
-        # [Q]uit
-        pyxel.text(30, 85, "Press Q to quit", 1)
-        pyxel.text(31, 85, "Press Q to quit", 7)
+        if not self.menu_c and not self.menu_g:
+            # Display title
+            pyxel.text(30, 35, "Abandon the ship!", 1)
+            pyxel.text(31, 35, "Abandon the ship!", 7)
+            # Display options:
+            # [P]lay
+            pyxel.text(30, 45, "[P]lay", 1)
+            pyxel.text(31, 45, "[P]lay", 7)
+            # [G]uide
+            pyxel.text(30, 55, "[G]uide", 1)
+            pyxel.text(31, 55, "[G]uide", 7)
+            # [C]redits
+            pyxel.text(30, 65, "[C]redits", 1)
+            pyxel.text(31, 65, "[C]redits", 7)
+        # [Q]uit (always available)
+        pyxel.text(30, 90, "Press Q to quit", 1)
+        pyxel.text(31, 90, "Press Q to quit", 7)
 
     # Game functions
 
