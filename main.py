@@ -9,6 +9,15 @@ FLOOR_IMAGES = ((32, 0), (32, 8), (40, 0), (40, 8), (48, 0), (48, 8), (56, 0), (
 FIRE_IMAGES = ((0, 16), (0, 24), (8, 16), (8, 24))
 TRANSPARENT_COLOR = 0
 
+
+# The below function is a tool for simplifying
+# the text displays. To use another color/appearance
+# configuration, you'll have to do it yourself
+def display_text(x, y, msg):
+    pyxel.text(x, y, msg, 1)
+    pyxel.text(x + 1, y, msg, 7)
+
+
 # Functions to detect collisions/interactions
 # (Some functions are based on work from Pyxel's
 # examples, by Takashi Kitao)
@@ -182,34 +191,25 @@ class App:
         pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
         if not self.menu_c and not self.menu_g:
             # Display title
-            pyxel.text(30, 35, "Abandon the ship!", 1)
-            pyxel.text(31, 35, "Abandon the ship!", 7)
+            display_text(30, 35, "Abandon the ship!")
             # Display options:
             # [P]lay
-            pyxel.text(30, 45, "[P]lay", 1)
-            pyxel.text(31, 45, "[P]lay", 7)
+            display_text(30, 45, "[P]lay")
             # [G]uide
-            pyxel.text(30, 55, "[G]uide", 1)
-            pyxel.text(31, 55, "[G]uide", 7)
+            display_text(30, 55, "[G]uide")
             # [C]redits
-            pyxel.text(30, 65, "[C]redits", 1)
-            pyxel.text(31, 65, "[C]redits", 7)
+            display_text(30, 65, "[C]redits")
         elif self.menu_g:
             # Display a guide
-            pyxel.text(30, 35, "== How to play ==", 1)
-            pyxel.text(31, 35, "== How to play ==", 7)
+            display_text(30, 35, "== How to play ==")
             # Diddi's controls
-            pyxel.text(30, 45, "Left key - Left", 1)
-            pyxel.text(31, 45, "Left key - Left", 7)
-            pyxel.text(30, 55, "Right key - Right", 1)
-            pyxel.text(31, 55, "Right key - Right", 7)
+            display_text(30, 45, "Left key - Left")
+            display_text(30, 55, "Right key - Right")
         elif self.menu_c:
             # Display a small credits sequence
-            pyxel.text(30, 35, "== Credits ==", 1)
-            pyxel.text(31, 35, "== Credits ==", 7)
+            display_text(30, 35, "== Credits ==")
         # [Q]uit (always available)
-        pyxel.text(30, 90, "Press Q to quit", 1)
-        pyxel.text(31, 90, "Press Q to quit", 7)
+        display_text(30, 90, "Press Q to quit")
 
     # Game functions
 
