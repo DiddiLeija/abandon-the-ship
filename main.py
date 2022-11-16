@@ -22,7 +22,9 @@ def display_text(x, y, msg):
 # (Some functions are based on work from Pyxel's
 # examples, by Takashi Kitao)
 SCROLL_BORDER_X = 80
-WALL_TILE_X = 4
+WALL_TILE_X = (
+    4  # TODO: Determine what this variable does, maybe it's the hint to fix issues!
+)
 
 
 def prepare_coords(x, y):
@@ -84,8 +86,9 @@ class Diddi:
     "The hero of this game."
 
     def __init__(self):
-        # Coordinates
-        self.x, self.y, self.dx, self.dy = 0, 0, 0, 0
+        # Coordinates / direction
+        self.x, self.y = 0, 0
+        self.dx, self.dy = 0, 0
         # The position of each aspect,
         # ordered by situation
         self.aspects = {
@@ -228,8 +231,12 @@ class App:
 
     def draw_game(self):
         pyxel.cls(0)
+        # Use camera() functions
+        pyxel.camera()
         # TODO: Enable tilemap movement
-        pyxel.bltm(0, 0, 1, 0, 0, 128, 128, 0)
+        pyxel.bltm(0, 0, 1, self.game_hero.scroll_x, 0, 128, 128, 0)
+        # Use camera() functions
+        pyxel.camera(self.game_hero.scroll_x, 0)
         # Draw the hero
         self.game_hero.draw()
 
