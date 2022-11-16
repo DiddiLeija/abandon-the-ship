@@ -218,6 +218,9 @@ class App:
         self.game_hero = Diddi()
 
     def update_game(self):
+        # FIXME: Currently, Diddi gets stuck
+        # and doesn't fall or even move. Probably,
+        # we should re-adapt the logics?
         self.game_hero.update()
 
     def draw_game(self):
