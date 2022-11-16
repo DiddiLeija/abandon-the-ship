@@ -222,6 +222,9 @@ class App:
 
     def draw_game(self):
         pyxel.cls(0)
+        # TODO: Enable tilemap movement
+        pyxel.bltm(0, 0, 1, 0, 0, 128, 128, 0)
+        # Draw the hero
         self.game_hero.draw()
 
 
