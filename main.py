@@ -110,8 +110,10 @@ class Diddi:
         if pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.KEY_D):
             self.dx = 2
             self.r_facing = True
-
         self.dy = min(self.dy + 1, 3)
+        if pyxel.btnp(pyxel.KEY_SPACE):
+            self.dy = -6
+
         self.x, self.y, self.dx, self.dy = push_back(self.x, self.y, self.dx, self.dy)
         if self.x < self.scroll_x:
             self.x = self.scroll_x
@@ -205,6 +207,7 @@ class App:
             # Diddi's controls
             display_text(30, 45, "Left key - Left")
             display_text(30, 55, "Right key - Right")
+            display_text(30, 65, "Space key - Fly")
         elif self.menu_c:
             # Display a small credits sequence
             display_text(30, 35, "== Credits ==")
