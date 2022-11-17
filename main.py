@@ -39,7 +39,7 @@ def get_tile(tile_x, tile_y):
     return pyxel.tilemap(0).pget(tile_x, tile_y)
 
 
-def detect_collision(x, y, dy):
+def detect_collision_v1(x, y, dy):
     "Check if you hit with something."
     x1, x2, y1, y2 = prepare_coords(x, y)
     for yi in range(y1, y2 + 1):
@@ -51,6 +51,20 @@ def detect_collision(x, y, dy):
             if get_tile(xi, y1 + 1) in FLOOR_IMAGES:
                 return True
     return False
+
+
+def check_collision_v2(x, y, dy):
+    "My own strategy to detect a collision."
+    x1, x2 = x - 1, x + 9
+    y1, y2 = y - 1, y + 9
+    print(x1, x2, y1, y2)
+    return False
+
+
+def detect_collision(x, y, dy):
+    # TODO: Migrate to detect_collision_v2()
+    # (and remove this transition function)
+    detect_collision_v1(x, y, dy)
 
 
 def push_back(x, y, dx, dy):
