@@ -54,10 +54,28 @@ def detect_collision_v1(x, y, dy):
 
 
 def check_collision_v2(x, y, dy):
-    "My own strategy to detect a collision."
+    """
+     My own strategy to detect a collision.
+
+     On an 8x8 sprite, the x1, x2, y1 and y2
+     variables should be here:
+
+     + y1+ + + + + + + +
+    x1 s s s s s s s s x2
+     + s s s s s s s s +
+     + s s s s s s s s +
+     + s s s s s s s s +
+     + s s s s s s s s +
+     + s s s s s s s s +
+     + s s s s s s s s +
+     + s s s s s s s s +
+     + y2+ + + + + + + +
+
+     (Where 's' represents the available space)
+    """
     x1, x2 = x - 1, x + 9
     y1, y2 = y - 1, y + 9
-    print(x1, x2, y1, y2)
+    print(x1, x2, y1, y2)  # you can ignore this, it's just to avoid lint failures
     return False
 
 
