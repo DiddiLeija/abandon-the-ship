@@ -39,6 +39,9 @@ def get_tile(tile_x, tile_y):
     return pyxel.tilemap(1).pget(tile_x, tile_y)
 
 
+# Version 1
+
+
 def detect_collision_v1(x, y, dy):
     "Check if you hit with something."
     x1, x2, y1, y2 = prepare_coords(x, y)
@@ -51,6 +54,37 @@ def detect_collision_v1(x, y, dy):
             if get_tile(xi, y1 + 1) in FLOOR_IMAGES:
                 return True
     return False
+
+
+def push_back_v1(x, y, dx, dy):
+    abs_dx = abs(dx)
+    abs_dy = abs(dy)
+    if abs_dx > abs_dy:
+        sign = 1 if dx > 0 else -1
+        for _ in range(abs_dx):
+            if detect_collision(x + sign, y, dy):
+                break
+            x += sign
+        sign = 1 if dy > 0 else -1
+        for _ in range(abs_dy):
+            if detect_collision(x, y + sign, dy):
+                break
+            y += sign
+    else:
+        sign = 1 if dy > 0 else -1
+        for _ in range(abs_dy):
+            if detect_collision(x, y + sign, dy):
+                break
+            y += sign
+        sign = 1 if dx > 0 else -1
+        for _ in range(abs_dx):
+            if detect_collision(x + sign, y, dy):
+                break
+            x += sign
+    return x, y, dx, dy
+
+
+# Version 2
 
 
 def detect_collision_v2(x, y, dy):
@@ -79,38 +113,23 @@ def detect_collision_v2(x, y, dy):
     return False
 
 
+def push_back_v2(x, y, dy):
+    "No idea of where to start."
+
+
+# Main
+
+
 def detect_collision(x, y, dy):
-    # TODO: Migrate to detect_collision_v2()
-    # (and remove this transition function)
+    # TODO: Migrate to v2 (and remove this
+    # transition function)
     detect_collision_v1(x, y, dy)
 
 
-def push_back(x, y, dx, dy):
-    abs_dx = abs(dx)
-    abs_dy = abs(dy)
-    if abs_dx > abs_dy:
-        sign = 1 if dx > 0 else -1
-        for _ in range(abs_dx):
-            if detect_collision(x + sign, y, dy):
-                break
-            x += sign
-        sign = 1 if dy > 0 else -1
-        for _ in range(abs_dy):
-            if detect_collision(x, y + sign, dy):
-                break
-            y += sign
-    else:
-        sign = 1 if dy > 0 else -1
-        for _ in range(abs_dy):
-            if detect_collision(x, y + sign, dy):
-                break
-            y += sign
-        sign = 1 if dx > 0 else -1
-        for _ in range(abs_dx):
-            if detect_collision(x + sign, y, dy):
-                break
-            x += sign
-    return x, y, dx, dy
+def push_back(x, y, dy):
+    # TODO: Migrate to v2 (and remove this
+    # transition function)
+    push_back_v1(x, y, dy)
 
 
 # Diddi class
