@@ -36,7 +36,7 @@ def prepare_coords(x, y):
 
 
 def get_tile(tile_x, tile_y):
-    return pyxel.tilemap(0).pget(tile_x, tile_y)
+    return pyxel.tilemap(1).pget(tile_x, tile_y)
 
 
 def detect_collision_v1(x, y, dy):
@@ -53,7 +53,7 @@ def detect_collision_v1(x, y, dy):
     return False
 
 
-def check_collision_v2(x, y, dy):
+def detect_collision_v2(x, y, dy):
     """
      My own strategy to detect a collision.
 
