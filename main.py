@@ -2,13 +2,6 @@ import random
 
 import pyxel
 
-LEVEL = [0]
-
-
-def identify_level_y(lev=None):
-    # TODO: Remove this function!
-    return 0
-
 
 # The below function is a tool for simplifying
 # the text displays. To use another color/appearance
@@ -44,7 +37,6 @@ enemies = []
 
 
 def get_tile(tile_x, tile_y):
-    tile_y += identify_level_y(LEVEL[0])
     return pyxel.tilemap(1).pget(tile_x, tile_y)
 
 
@@ -169,11 +161,9 @@ class Diddi:
 class App:
     "This will run the game."
 
-    def __init__(self, level=1):
+    def __init__(self):
         pyxel.load("resource.pyxres")  # Load our own pyxres to test
 
-        self.level = level
-        LEVEL[0] = self.level
         # self.player = Diddi()
         self.winner = False
         self.playing = False
@@ -244,11 +234,11 @@ class App:
 
     def update_game(self):
         if pyxel.btn(pyxel.KEY_Q):
-            self.game_over()
+            pyxel.quit()
         self.player.update()
         for enemy in enemies:
             if abs(self.player.x - enemy.x) < 6 and abs(self.player.y - enemy.y) < 6:
-                self.game_over()
+                self.player.alive = False
                 return
             enemy.update()
             if enemy.x < scroll_x - 8 or enemy.x > scroll_x + 160 or enemy.y > 160:
@@ -259,14 +249,9 @@ class App:
         pyxel.cls(0)
         pyxel.camera()
         # pyxel.bltm(0, 0, 0, (scroll_x // 4) % 128, 128, 128, 128)
-        pyxel.bltm(0, 0, 1, scroll_x, identify_level_y(self.level), 128, 128, 0)
+        pyxel.bltm(0, 0, 1, scroll_x, 0, 128, 128, 0)
         pyxel.camera(scroll_x, 0)
         self.player.draw()
-
-    def game_over(self):
-        # TODO: Get rid of this!
-        print("Game Over?")
-        pyxel.quit()
 
 
 if __name__ == "__main__":
