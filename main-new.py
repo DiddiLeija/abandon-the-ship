@@ -1,22 +1,39 @@
-import math, random
+import random
 
 import pyxel
 
 LEVEL = [0]
 
-def identify_level_y(l):
-    # TODO: Fix this to enable multiple levels, not just the first tile!
-    if l == 1:
-        return 0
-    return l*128
 
-# -- START OF CODE TAKEN FROM PYXEL --
+def identify_level_y(lev=None):
+    # TODO: Remove this function!
+    return 0
 
-# we modified some stuff to enable all the levels
+
+# The below function is a tool for simplifying
+# the text displays. To use another color/appearance
+# configuration, you'll have to do it yourself
+def display_text(x, y, msg):
+    pyxel.text(x, y, msg, 1)
+    pyxel.text(x + 1, y, msg, 7)
+
+
+# Functions to detect collisions/interactions
+# (Some functions are based on work from Pyxel's
+# examples, by Takashi Kitao)
 
 SCROLL_BORDER_X = 80
 WALL_TILE_X = 4
-TILES_FLOOR = [(32, 0), (32, 8), (40, 0), (40, 8), (48, 0), (48, 8), (56, 0), (56, 8)]  # Modified, and ignored the fire images for now
+TILES_FLOOR = [
+    (32, 0),
+    (32, 8),
+    (40, 0),
+    (40, 8),
+    (48, 0),
+    (48, 8),
+    (56, 0),
+    (56, 8),
+]  # Modified, and ignored the fire images for now
 TILE_SPAWN1 = (0, 1)
 TILE_SPAWN2 = (1, 1)
 TILE_SPAWN3 = (2, 1)
@@ -80,20 +97,6 @@ def is_wall(x, y):
     return tile in TILES_FLOOR or tile[0] >= WALL_TILE_X
 
 
-def spawn_enemy(left_x, right_x):
-    left_x = math.ceil(left_x / 8)
-    right_x = math.floor(right_x / 8)
-    for x in range(left_x, right_x + 1):
-        for y in range(16):
-            tile = get_tile(x, y)
-            if tile == TILE_SPAWN1:
-                enemies.append(Enemy1(x * 8, y * 8))
-            elif tile == TILE_SPAWN2:
-                enemies.append(Enemy2(x * 8, y * 8))
-            elif tile == TILE_SPAWN3:
-                enemies.append(Enemy3(x * 8, y * 8))
-
-
 def cleanup_list(list):
     i = 0
     while i < len(list):
@@ -103,11 +106,8 @@ def cleanup_list(list):
         else:
             list.pop(i)
 
-# -- END OF CODE TAKEN FROM PYXEL --
-
 
 class Diddi:
-
     def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
@@ -138,7 +138,7 @@ class Diddi:
         self.dy = min(self.dy + 1, 3)
         if pyxel.btnp(pyxel.KEY_SPACE):
             self.dy = -6
-            #pyxel.play(3, 8)
+            # pyxel.play(3, 8)
         self.x, self.y, self.dx, self.dy = push_back(self.x, self.y, self.dx, self.dy)
         if self.x < scroll_x:
             self.x = scroll_x
@@ -150,7 +150,6 @@ class Diddi:
         if self.x > scroll_x + SCROLL_BORDER_X:
             last_scroll_x = scroll_x
             scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
-            #spawn_enemy(last_scroll_x + 128, scroll_x + 127)
 
     def draw(self):
         if self.is_falling:
@@ -175,11 +174,75 @@ class App:
 
         self.level = level
         LEVEL[0] = self.level
-        self.player = Diddi()
+        # self.player = Diddi()
         self.winner = False
+        self.playing = False
+
+        self.setup_menu()
         pyxel.run(self.update, self.draw)
 
     def update(self):
+        if not self.playing:
+            self.update_menu()
+        else:
+            self.update_game()
+
+    def draw(self):
+        if not self.playing:
+            self.draw_menu()
+        else:
+            self.draw_game()
+
+    # --- Menu stuff ---
+    def setup_menu(self):
+        self.playing = False
+        self.menu_c = False
+        self.menu_g = False
+
+    def update_menu(self):
+        if pyxel.btnp(pyxel.KEY_P):
+            # [P]lay
+            self.setup_game()
+        elif pyxel.btnp(pyxel.KEY_G) and not self.menu_c:
+            # [G]uide
+            self.menu_g = not self.menu_g
+        elif pyxel.btnp(pyxel.KEY_C) and not self.menu_g:
+            # [C]redits
+            self.menu_c = not self.menu_c
+
+    def draw_menu(self):
+        pyxel.cls(0)
+        # Draw the decorative tilemap
+        pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
+        if not self.menu_c and not self.menu_g:
+            # Display title
+            display_text(30, 35, "Abandon the ship!")
+            # Display options:
+            # [P]lay
+            display_text(30, 45, "[P]lay")
+            # [G]uide
+            display_text(30, 55, "[G]uide")
+            # [C]redits
+            display_text(30, 65, "[C]redits")
+        elif self.menu_g:
+            # Display a guide
+            display_text(30, 35, "== How to play ==")
+            # Diddi's controls
+            display_text(30, 45, "Left key - Left")
+            display_text(30, 55, "Right key - Right")
+            display_text(30, 65, "Space key - Fly")
+        elif self.menu_c:
+            # Display a small credits sequence
+            display_text(30, 35, "== Credits ==")
+        # [Q]uit (always available)
+        display_text(30, 90, "Press Q to quit")
+
+    # --- Game stuff ---
+    def setup_game(self):
+        self.playing = True
+        self.player = Diddi()
+
+    def update_game(self):
         if pyxel.btn(pyxel.KEY_Q):
             self.game_over()
         self.player.update()
@@ -192,22 +255,20 @@ class App:
                 enemy.is_alive = False
         cleanup_list(enemies)
 
-    def draw(self):
+    def draw_game(self):
         pyxel.cls(0)
         pyxel.camera()
-        #pyxel.bltm(0, 0, 0, (scroll_x // 4) % 128, 128, 128, 128)
+        # pyxel.bltm(0, 0, 0, (scroll_x // 4) % 128, 128, 128, 128)
         pyxel.bltm(0, 0, 1, scroll_x, identify_level_y(self.level), 128, 128, 0)
         pyxel.camera(scroll_x, 0)
         self.player.draw()
 
     def game_over(self):
-        # Modify this function to just print "Game Over"
+        # TODO: Get rid of this!
         print("Game Over?")
         pyxel.quit()
 
-# Here comes the test: Only run the "game sequence"
-# (I mean, avoid any menu stuff) using a previously-confirmed
-# behavior with minimal changes.
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     pyxel.init(128, 128, "Abandon the ship! (Internal test 1)")
     App()

@@ -1,6 +1,7 @@
 import nox
 
-file_list = ("main.py", "noxfile.py")
+# "main-new.py" is just a temporal file
+file_list = ("main.py", "noxfile.py", "main-new.py")
 
 
 @nox.session
@@ -21,6 +22,6 @@ def lint(session):
     session.install("-r", "requirements.txt")
     session.install("-r", "requirements-lint.txt")
     # Run linters
-    session.run("flake8", *file_list, "--max-line-length=127")
+    session.run("flake8", *file_list, "--max-line-length=127", "--ignore=F841")
     session.run("isort", "--check-only", *file_list)
     session.run("black", "--check", *file_list)
