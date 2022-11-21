@@ -1,7 +1,6 @@
 import nox
 
-# "main-new.py" is just a temporal file
-file_list = ("main.py", "noxfile.py", "main-new.py")
+file_list = ("main.py", "noxfile.py")
 
 
 @nox.session

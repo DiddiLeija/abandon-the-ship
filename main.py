@@ -2,12 +2,12 @@ import random
 
 import pyxel
 
-# Variables that help us identify certain
-# elements (set up without any class, so
-# they can be accessed anywhere)
-FLOOR_IMAGES = ((32, 0), (32, 8), (40, 0), (40, 8), (48, 0), (48, 8), (56, 0), (56, 8))
-FIRE_IMAGES = ((0, 16), (0, 24), (8, 16), (8, 24))
-TRANSPARENT_COLOR = 0
+LEVEL = [0]
+
+
+def identify_level_y(lev=None):
+    # TODO: Remove this function!
+    return 0
 
 
 # The below function is a tool for simplifying
@@ -21,42 +21,50 @@ def display_text(x, y, msg):
 # Functions to detect collisions/interactions
 # (Some functions are based on work from Pyxel's
 # examples, by Takashi Kitao)
+
 SCROLL_BORDER_X = 80
-WALL_TILE_X = (
-    4  # TODO: Determine what this variable does, maybe it's the hint to fix issues!
-)
+WALL_TILE_X = 4
+TILES_FLOOR = [
+    (32, 0),
+    (32, 8),
+    (40, 0),
+    (40, 8),
+    (48, 0),
+    (48, 8),
+    (56, 0),
+    (56, 8),
+]  # Modified, and ignored the fire images for now
+TILE_SPAWN1 = (0, 1)
+TILE_SPAWN2 = (1, 1)
+TILE_SPAWN3 = (2, 1)
+
+scroll_x = 0
+player = None
+enemies = []
 
 
-def prepare_coords(x, y):
+def get_tile(tile_x, tile_y):
+    tile_y += identify_level_y(LEVEL[0])
+    return pyxel.tilemap(1).pget(tile_x, tile_y)
+
+
+def detect_collision(x, y, dy):
     x1 = x // 8
     y1 = y // 8
     x2 = (x + 8 - 1) // 8
     y2 = (y + 8 - 1) // 8
-    return x1, x2, y1, y2
-
-
-def get_tile(tile_x, tile_y):
-    return pyxel.tilemap(1).pget(tile_x, tile_y)
-
-
-# Version 1
-
-
-def detect_collision_v1(x, y, dy):
-    "Check if you hit with something."
-    x1, x2, y1, y2 = prepare_coords(x, y)
     for yi in range(y1, y2 + 1):
         for xi in range(x1, x2 + 1):
             if get_tile(xi, yi)[0] >= WALL_TILE_X:
                 return True
     if dy > 0 and y % 8 == 1:
         for xi in range(x1, x2 + 1):
-            if get_tile(xi, y1 + 1) in FLOOR_IMAGES:
+            if get_tile(xi, y1 + 1) in TILES_FLOOR:
                 return True
     return False
 
 
-def push_back_v1(x, y, dx, dy):
+def push_back(x, y, dx, dy):
     abs_dx = abs(dx)
     abs_dy = abs(dy)
     if abs_dx > abs_dy:
@@ -84,64 +92,30 @@ def push_back_v1(x, y, dx, dy):
     return x, y, dx, dy
 
 
-# Version 2
+def is_wall(x, y):
+    tile = get_tile(x // 8, y // 8)
+    return tile in TILES_FLOOR or tile[0] >= WALL_TILE_X
 
 
-def detect_collision_v2(x, y, dy):
-    """
-     My own strategy to detect a collision.
-
-     On an 8x8 sprite, the x1, x2, y1 and y2
-     variables should be here:
-
-     + y1+ + + + + + + +
-    x1 s s s s s s s s x2
-     + s s s s s s s s +
-     + s s s s s s s s +
-     + s s s s s s s s +
-     + s s s s s s s s +
-     + s s s s s s s s +
-     + s s s s s s s s +
-     + s s s s s s s s +
-     + y2+ + + + + + + +
-
-     (Where 's' represents the available space)
-    """
-    x1, x2 = x - 1, x + 9
-    y1, y2 = y - 1, y + 9
-    print(x1, x2, y1, y2)  # you can ignore this, it's just to avoid lint failures
-    return False
+def cleanup_list(list):
+    i = 0
+    while i < len(list):
+        elem = list[i]
+        if elem.is_alive:
+            i += 1
+        else:
+            list.pop(i)
 
 
-def push_back_v2(x, y, dy):
-    "No idea of where to start."
-
-
-# Main
-
-
-def detect_collision(x, y, dy):
-    # TODO: Migrate to v2 (and remove this
-    # transition function)
-    detect_collision_v1(x, y, dy)
-
-
-def push_back(x, y, dy):
-    # TODO: Migrate to v2 (and remove this
-    # transition function)
-    push_back_v1(x, y, dy)
-
-
-# Diddi class
 class Diddi:
-    "The hero of this game."
-
-    def __init__(self):
-        # Coordinates / direction
-        self.x, self.y = 0, 0
-        self.dx, self.dy = 0, 0
-        # The position of each aspect,
-        # ordered by situation
+    def __init__(self, x=0, y=0):
+        self.x = x
+        self.y = y
+        self.dx = 0
+        self.dy = 0
+        self.r_facing = True
+        self.is_falling = False
+        self.has_shooter = False
         self.aspects = {
             # [D]eath
             "d": ((0, 8) for i in range(3)),
@@ -151,37 +125,34 @@ class Diddi:
             "l": ((8, 8), (16, 8), (24, 8)),
         }
         self.alive = True
-        self.falling = False
-        self.r_facing = True  # True = right, False = left
-        self.size = 8
-        self.scroll_x = 0
 
     def update(self):
+        global scroll_x
         last_y = self.y
-        if pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.KEY_A):
+        if pyxel.btn(pyxel.KEY_LEFT):
             self.dx = -2
             self.r_facing = False
-        if pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.KEY_D):
+        if pyxel.btn(pyxel.KEY_RIGHT):
             self.dx = 2
             self.r_facing = True
         self.dy = min(self.dy + 1, 3)
         if pyxel.btnp(pyxel.KEY_SPACE):
             self.dy = -6
-
+            # pyxel.play(3, 8)
         self.x, self.y, self.dx, self.dy = push_back(self.x, self.y, self.dx, self.dy)
-        if self.x < self.scroll_x:
-            self.x = self.scroll_x
+        if self.x < scroll_x:
+            self.x = scroll_x
         if self.y < 0:
             self.y = 0
         self.dx = int(self.dx * 0.8)
-        self.falling = self.y > last_y
+        self.is_falling = self.y > last_y
 
-        if self.x > self.scroll_x + SCROLL_BORDER_X:
-            self.scroll_x = self.scroll_x
-            self.scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
+        if self.x > scroll_x + SCROLL_BORDER_X:
+            last_scroll_x = scroll_x
+            scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
 
     def draw(self):
-        if self.falling:
+        if self.is_falling:
             situation = 2
         else:
             situation = random.choice([0, 1])
@@ -195,23 +166,22 @@ class Diddi:
         pyxel.blt(self.x, self.y, 0, img_x, img_y, 8, 8, 0)
 
 
-# Main app class
 class App:
-    "The main class that puts everything together."
+    "This will run the game."
 
-    # Main functions (and misc tools)
+    def __init__(self, level=1):
+        pyxel.load("resource.pyxres")  # Load our own pyxres to test
 
-    def __init__(self):
-        pyxel.load("resource.pyxres")
-        self.startup()
+        self.level = level
+        LEVEL[0] = self.level
+        # self.player = Diddi()
+        self.winner = False
+        self.playing = False
 
-    def startup(self):
         self.setup_menu()
         pyxel.run(self.update, self.draw)
 
     def update(self):
-        if pyxel.btnp(pyxel.KEY_Q):
-            pyxel.quit()
         if not self.playing:
             self.update_menu()
         else:
@@ -223,8 +193,7 @@ class App:
         else:
             self.draw_game()
 
-    # Menu functions
-
+    # --- Menu stuff ---
     def setup_menu(self):
         self.playing = False
         self.menu_c = False
@@ -268,32 +237,38 @@ class App:
         # [Q]uit (always available)
         display_text(30, 90, "Press Q to quit")
 
-    # Game functions
-
+    # --- Game stuff ---
     def setup_game(self):
         self.playing = True
-        self.game_hero = Diddi()
+        self.player = Diddi()
 
     def update_game(self):
-        # FIXME: Currently, Diddi gets stuck
-        # and doesn't fall or even move. Probably,
-        # we should re-adapt the logics?
-        self.game_hero.update()
+        if pyxel.btn(pyxel.KEY_Q):
+            self.game_over()
+        self.player.update()
+        for enemy in enemies:
+            if abs(self.player.x - enemy.x) < 6 and abs(self.player.y - enemy.y) < 6:
+                self.game_over()
+                return
+            enemy.update()
+            if enemy.x < scroll_x - 8 or enemy.x > scroll_x + 160 or enemy.y > 160:
+                enemy.is_alive = False
+        cleanup_list(enemies)
 
     def draw_game(self):
         pyxel.cls(0)
-        # Use camera() functions
         pyxel.camera()
-        # TODO: Enable tilemap movement
-        pyxel.bltm(0, 0, 1, self.game_hero.scroll_x, 0, 128, 128, 0)
-        # Use camera() functions
-        pyxel.camera(self.game_hero.scroll_x, 0)
-        # Draw the hero
-        self.game_hero.draw()
+        # pyxel.bltm(0, 0, 0, (scroll_x // 4) % 128, 128, 128, 128)
+        pyxel.bltm(0, 0, 1, scroll_x, identify_level_y(self.level), 128, 128, 0)
+        pyxel.camera(scroll_x, 0)
+        self.player.draw()
+
+    def game_over(self):
+        # TODO: Get rid of this!
+        print("Game Over?")
+        pyxel.quit()
 
 
 if __name__ == "__main__":
-    # Initialize Pyxel here, not before!
-    pyxel.init(128, 128, title="Abandon the ship!")
-    # Call the App() class, which will make all the job
+    pyxel.init(128, 128, "Abandon the ship! (Internal test 1)")
     App()
