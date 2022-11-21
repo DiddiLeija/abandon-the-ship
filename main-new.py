@@ -209,5 +209,5 @@ class App:
 # (I mean, avoid any menu stuff) using a previously-confirmed
 # behavior with minimal changes.
 if __name__ == '__main__':
-    pyxel.init(110, 110, "Abandon the ship! (Internal test 1)")
+    pyxel.init(128, 128, "Abandon the ship! (Internal test 1)")
     App()
