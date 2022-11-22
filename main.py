@@ -38,6 +38,10 @@ player = None
 enemies = []
 
 
+def adjust_x(real_x):
+    return scroll_x + real_x
+
+
 def get_tile(tile_x, tile_y):
     return pyxel.tilemap(1).pget(tile_x, tile_y)
 
@@ -149,6 +153,8 @@ class Diddi:
         self.alive = True
 
     def update(self):
+        if not self.alive:
+            return
         global scroll_x
         last_y = self.y
         if pyxel.btn(pyxel.KEY_LEFT):
@@ -170,6 +176,10 @@ class Diddi:
         self.is_falling = self.y > last_y
 
         if self.x > scroll_x + SCROLL_BORDER_X:
+            # The 'scroll_x' stuff and the enemy
+            # generation is here for a reason.
+            #
+            # TODO: Move this block to App()!
             last_scroll_x = scroll_x
             scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
             spawn_fire(last_scroll_x + 128, scroll_x + 127)
@@ -193,9 +203,8 @@ class App:
     "This will run the game."
 
     def __init__(self):
-        pyxel.load("resource.pyxres")  # Load our own pyxres to test
+        pyxel.load("resource.pyxres")
 
-        # self.player = Diddi()
         self.winner = False
         self.playing = False
 
@@ -234,29 +243,29 @@ class App:
     def draw_menu(self):
         pyxel.cls(0)
         # Draw the decorative tilemap
-        pyxel.bltm(0, 0, 0, 0, 0, 128, 128, 0)
+        pyxel.bltm(adjust_x(0), 0, 0, 0, 0, 128, 128, 0)
         if not self.menu_c and not self.menu_g:
             # Display title
-            display_text(30, 35, "Abandon the ship!")
+            display_text(adjust_x(30), 35, "Abandon the ship!")
             # Display options:
             # [P]lay
-            display_text(30, 45, "[P]lay")
+            display_text(adjust_x(30), 45, "[P]lay")
             # [G]uide
-            display_text(30, 55, "[G]uide")
+            display_text(adjust_x(30), 55, "[G]uide")
             # [C]redits
-            display_text(30, 65, "[C]redits")
+            display_text(adjust_x(30), 65, "[C]redits")
         elif self.menu_g:
             # Display a guide
-            display_text(30, 35, "== How to play ==")
+            display_text(adjust_x(30), 35, "== How to play ==")
             # Diddi's controls
-            display_text(30, 45, "Left key - Left")
-            display_text(30, 55, "Right key - Right")
-            display_text(30, 65, "Space key - Fly")
+            display_text(adjust_x(30), 45, "Left key - Left")
+            display_text(adjust_x(30), 55, "Right key - Right")
+            display_text(adjust_x(30), 65, "Space key - Fly")
         elif self.menu_c:
             # Display a small credits sequence
-            display_text(30, 35, "== Credits ==")
+            display_text(adjust_x(30), 35, "== Credits ==")
         # [Q]uit (always available)
-        display_text(30, 90, "Press Q to quit")
+        display_text(adjust_x(30), 90, "Press Q to quit")
 
     # --- Game stuff ---
     def setup_game(self):
@@ -264,7 +273,7 @@ class App:
         self.player = Diddi()
 
     def update_game(self):
-        if pyxel.btn(pyxel.KEY_Q):
+        if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
         self.player.update()
         for enemy in enemies:
@@ -275,16 +284,17 @@ class App:
             if enemy.x < scroll_x - 8 or enemy.x > scroll_x + 160 or enemy.y > 160:
                 enemy.is_alive = False
         cleanup_list(enemies)
-        if not self.player.alive:
-            pyxel.quit()
 
     def draw_game(self):
         pyxel.cls(0)
-        pyxel.camera()
-        # pyxel.bltm(0, 0, 0, (scroll_x // 4) % 128, 128, 128, 128)
-        pyxel.bltm(0, 0, 1, scroll_x, 0, 128, 128, 0)
-        pyxel.camera(scroll_x, 0)
-        self.player.draw()
+        if self.player.alive:
+            pyxel.camera()
+            pyxel.bltm(0, 0, 1, scroll_x, 0, 128, 128, 0)
+            pyxel.camera(scroll_x, 0)
+            self.player.draw()
+        else:
+            display_text(adjust_x(30), 30, "Oh no! You lost!")
+            display_text(adjust_x(0), 40, "Press Q to quit, and try again!")
 
 
 if __name__ == "__main__":
