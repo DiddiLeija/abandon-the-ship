@@ -1,3 +1,4 @@
+import math
 import random
 
 import pyxel
@@ -27,6 +28,7 @@ TILES_FLOOR = [
     (56, 0),
     (56, 8),
 ]  # Modified, and ignored the fire images for now
+FIRE_IMAGES = [(0, 2), (1, 2), (0, 3), (1, 3)]
 TILE_SPAWN1 = (0, 1)
 TILE_SPAWN2 = (1, 1)
 TILE_SPAWN3 = (2, 1)
@@ -89,6 +91,16 @@ def is_wall(x, y):
     return tile in TILES_FLOOR or tile[0] >= WALL_TILE_X
 
 
+def spawn_fire(left_x, right_x):
+    left_x = math.ceil(left_x / 8)
+    right_x = math.floor(right_x / 8)
+    for x in range(left_x, right_x + 1):
+        for y in range(16):
+            tile = get_tile(x, y)
+            if tile in FIRE_IMAGES:
+                enemies.append(Fire(x * 8, y * 8))
+
+
 def cleanup_list(list):
     i = 0
     while i < len(list):
@@ -97,6 +109,24 @@ def cleanup_list(list):
             i += 1
         else:
             list.pop(i)
+
+
+class Fire:
+    "A static 'enemy', which is a fire leak."
+
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.is_alive = True  # eternally alive
+
+    def update(self):
+        # Pass, no such movement or action
+        # should be performed
+        pass
+
+    def draw(self):
+        # Pass, the fire image is already
+        # drawn in the tilemap
+        pass
 
 
 class Diddi:
@@ -110,7 +140,7 @@ class Diddi:
         self.has_shooter = False
         self.aspects = {
             # [D]eath
-            "d": ((0, 8) for i in range(3)),
+            "d": [(0, 8) for i in range(3)],
             # [R]ight-facing
             "r": ((8, 0), (16, 0), (24, 0)),
             # [L]eft-facing
@@ -142,6 +172,7 @@ class Diddi:
         if self.x > scroll_x + SCROLL_BORDER_X:
             last_scroll_x = scroll_x
             scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
+            spawn_fire(last_scroll_x + 128, scroll_x + 127)
 
     def draw(self):
         if self.is_falling:
@@ -244,6 +275,8 @@ class App:
             if enemy.x < scroll_x - 8 or enemy.x > scroll_x + 160 or enemy.y > 160:
                 enemy.is_alive = False
         cleanup_list(enemies)
+        if not self.player.alive:
+            pyxel.quit()
 
     def draw_game(self):
         pyxel.cls(0)
