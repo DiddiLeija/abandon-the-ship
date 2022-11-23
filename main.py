@@ -274,6 +274,7 @@ class App:
         self.playing = True
         self.player = Diddi()
         self.dead_snd = False
+        spawn_fire(0, 128)
         pyxel.stop()
         pyxel.playm(0, loop=True)
 
