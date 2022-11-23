@@ -317,5 +317,5 @@ class App:
 
 
 if __name__ == "__main__":
-    pyxel.init(128, 128, "Abandon the ship! (Internal test 1)")
+    pyxel.init(128, 128, "Abandon the ship!")
     App()
