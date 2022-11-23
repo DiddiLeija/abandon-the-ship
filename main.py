@@ -365,8 +365,8 @@ class App:
         pyxel.playm(2)
 
     def play_winner_sound(self):
-        # TODO: fixme.
-        pass
+        pyxel.stop()
+        pyxel.playm(3)
 
 
 if __name__ == "__main__":
