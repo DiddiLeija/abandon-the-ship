@@ -228,6 +228,8 @@ class App:
         self.playing = False
         self.menu_c = False
         self.menu_g = False
+        pyxel.stop()
+        pyxel.playm(1, loop=True)
 
     def update_menu(self):
         if pyxel.btnp(pyxel.KEY_P):
@@ -271,19 +273,28 @@ class App:
     def setup_game(self):
         self.playing = True
         self.player = Diddi()
+        self.dead_snd = False
+        pyxel.stop()
+        pyxel.playm(0, loop=True)
 
     def update_game(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
         self.player.update()
-        for enemy in enemies:
-            if abs(self.player.x - enemy.x) < 6 and abs(self.player.y - enemy.y) < 6:
-                self.player.alive = False
-                return
-            enemy.update()
-            if enemy.x < scroll_x - 8 or enemy.x > scroll_x + 160 or enemy.y > 160:
-                enemy.is_alive = False
-        cleanup_list(enemies)
+        if self.player.alive:
+            for enemy in enemies:
+                # NOTE: Forget the mess with the 2 "if's",
+                # but Black and Flake8 are fighting for that :/
+                if abs(self.player.x - enemy.x) < 6:
+                    if abs(self.player.y - enemy.y) < 6:
+                        self.player.alive = False
+                        pyxel.stop()
+                        pyxel.playm(2)
+                        return
+                enemy.update()
+                if enemy.x < scroll_x - 8 or enemy.x > scroll_x + 160 or enemy.y > 160:
+                    enemy.is_alive = False
+            cleanup_list(enemies)
 
     def draw_game(self):
         pyxel.cls(0)
