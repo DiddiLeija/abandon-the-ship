@@ -33,8 +33,13 @@ TILE_SPAWN1 = (0, 1)
 TILE_SPAWN2 = (1, 1)
 TILE_SPAWN3 = (2, 1)
 
+BUTTON_IMAGE = (2, 4)
+
 scroll_x = 0
 player = None
+# TODO: Now that "enemies" also
+# contain the "goal button", we
+# should rename the list!
 enemies = []
 
 
@@ -105,6 +110,17 @@ def spawn_fire(left_x, right_x):
                 enemies.append(Fire(x * 8, y * 8))
 
 
+def spawn_pod(left_x, right_x):
+    # "Spawn" the escape pod button
+    left_x = math.ceil(left_x / 8)
+    right_x = math.floor(right_x / 8)
+    for x in range(left_x, right_x + 1):
+        for y in range(16):
+            tile = get_tile(x, y)
+            if tile == BUTTON_IMAGE:
+                enemies.append(Button(x * 8, y * 8))
+
+
 def cleanup_list(list):
     i = 0
     while i < len(list):
@@ -129,6 +145,27 @@ class Fire:
 
     def draw(self):
         # Pass, the fire image is already
+        # drawn in the tilemap
+        pass
+
+
+class Button:
+    """
+    A static object with coords: the button to escape
+    (the goal of the game).
+    """
+
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+        self.is_alive = True  # eternally alive
+
+    def update(self):
+        # Pass, no such movement or action
+        # should be performed
+        pass
+
+    def draw(self):
+        # Pass, the image is already
         # drawn in the tilemap
         pass
 
@@ -183,6 +220,7 @@ class Diddi:
             last_scroll_x = scroll_x
             scroll_x = min(self.x - SCROLL_BORDER_X, 240 * 8)
             spawn_fire(last_scroll_x + 128, scroll_x + 127)
+            spawn_pod(last_scroll_x + 128, scroll_x + 127)
 
     def draw(self):
         if self.is_falling:
@@ -274,7 +312,11 @@ class App:
         self.playing = True
         self.player = Diddi()
         self.dead_snd = False
+
+        # Only call spawn_fire(), because
+        # spawn_pod() is useless when x <= 128...
         spawn_fire(0, 128)
+
         pyxel.stop()
         pyxel.playm(0, loop=True)
 
@@ -288,8 +330,12 @@ class App:
                 # but Black and Flake8 are fighting for that :/
                 if abs(self.player.x - enemy.x) < 6:
                     if abs(self.player.y - enemy.y) < 6:
-                        self.player.alive = False
-                        self.play_death_sound()
+                        if isinstance(enemy, Fire):
+                            self.player.alive = False
+                            self.play_death_sound()
+                        else:
+                            self.winner = True
+                            self.play_winner_sound()
                         return
                 enemy.update()
                 if enemy.x < scroll_x - 8 or enemy.x > scroll_x + 160 or enemy.y > 160:
@@ -302,7 +348,10 @@ class App:
 
     def draw_game(self):
         pyxel.cls(0)
-        if self.player.alive:
+        if self.winner:
+            display_text(adjust_x(30), 30, "Yipee! You won!")
+            display_text(adjust_x(0), 40, "Press Q to quit, thanks for playing!")
+        elif self.player.alive:
             pyxel.camera()
             pyxel.bltm(0, 0, 1, scroll_x, 0, 128, 128, 0)
             pyxel.camera(scroll_x, 0)
@@ -314,6 +363,10 @@ class App:
     def play_death_sound(self):
         pyxel.stop()
         pyxel.playm(2)
+
+    def play_winner_sound(self):
+        # TODO: fixme.
+        pass
 
 
 if __name__ == "__main__":
