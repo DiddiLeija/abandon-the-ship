@@ -289,13 +289,16 @@ class App:
                 if abs(self.player.x - enemy.x) < 6:
                     if abs(self.player.y - enemy.y) < 6:
                         self.player.alive = False
-                        pyxel.stop()
-                        pyxel.playm(2)
+                        self.play_death_sound()
                         return
                 enemy.update()
                 if enemy.x < scroll_x - 8 or enemy.x > scroll_x + 160 or enemy.y > 160:
                     enemy.is_alive = False
             cleanup_list(enemies)
+            if self.player.y >= pyxel.height:
+                # You fell into a pit and died!
+                self.player.alive = False
+                self.play_death_sound()
 
     def draw_game(self):
         pyxel.cls(0)
@@ -307,6 +310,10 @@ class App:
         else:
             display_text(adjust_x(30), 30, "Oh no! You lost!")
             display_text(adjust_x(0), 40, "Press Q to quit, and try again!")
+
+    def play_death_sound(self):
+        pyxel.stop()
+        pyxel.playm(2)
 
 
 if __name__ == "__main__":
