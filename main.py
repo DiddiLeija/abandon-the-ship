@@ -350,7 +350,7 @@ class App:
         pyxel.cls(0)
         if self.winner:
             display_text(adjust_x(30), 30, "Yipee! You won!")
-            display_text(adjust_x(0), 40, "Press Q to quit, thanks for playing!")
+            display_text(adjust_x(0), 40, "Press Q to quit, thank you!")
         elif self.player.alive:
             pyxel.camera()
             pyxel.bltm(0, 0, 1, scroll_x, 0, 128, 128, 0)
