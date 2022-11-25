@@ -23,3 +23,7 @@ zones, and reach out the escape pods to survive!
 
 I'm using [Python](https://python.org) (3.7 and higher) and the [Pyxel](https://github.com/kitao/pyxel)
 package to operate the game, graphics, etc.
+
+## Discord server
+
+I have a **Discord server**, if you're interested in sharing ideas, asking questions, or just being part of a community! Here's the link: https://discord.gg/DfrHxT9ENy.
