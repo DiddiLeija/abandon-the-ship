@@ -31,4 +31,12 @@ Press `Q` whenever you want to exit the game.
 - **Never fall into a pit.** Burning is not the only way to die in this game. Jump to avoid fatal falls.
 - **Reach out the escape pod.** It's located at the other side of the ship. To activate it to escape, just touch the near **purple button**.
 
+### NOTE: Restarting the game
+
+Due to some issues, you cannot restart the game without closing it and trying again [^1]. If you're using the in-browser version, you can just refresh the page. If not, you'll have to close the app/file and run it again.
+
+---
+
 And that's it. Have fun!
+
+[^1]: We're currently working to fix that issue. Sorry for the inconvenience.
