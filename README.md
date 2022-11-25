@@ -21,6 +21,8 @@ zones, and reach out the escape pods to survive!
 
 **Need some help? Check out [this guide](guide.md), you may find it useful!**
 
+**Ready, player one? You'll find the game [on itch.io](https://diddileija.itch.io/abandon-the-ship)!**
+
 ## Game engine
 
 I'm using [Python](https://python.org) (3.7 and higher) and the [Pyxel](https://github.com/kitao/pyxel)
