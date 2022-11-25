@@ -270,6 +270,8 @@ class App:
         pyxel.playm(1, loop=True)
 
     def update_menu(self):
+        if pyxel.btnp(pyxel.KEY_Q):
+            pyxel.quit()
         if pyxel.btnp(pyxel.KEY_P):
             # [P]lay
             self.setup_game()
@@ -304,6 +306,11 @@ class App:
         elif self.menu_c:
             # Display a small credits sequence
             display_text(adjust_x(30), 35, "== Credits ==")
+            display_text(
+                adjust_x(30),
+                45,
+                "Check out the\n'THANKS.md' file, \nlocated at the\nGithub repo...",
+            )
         # [Q]uit (always available)
         display_text(adjust_x(30), 90, "Press Q to quit")
 
