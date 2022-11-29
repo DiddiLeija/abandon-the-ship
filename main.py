@@ -195,7 +195,8 @@ class Diddi:
     def update(self):
         if not self.alive:
             return
-        if not self.active: return
+        if not self.active:
+            return
         global scroll_x
         last_y = self.y
         if pyxel.btn(pyxel.KEY_LEFT):
@@ -347,12 +348,14 @@ class App:
         self.setup_game()
 
     def pause_game(self):
-        if self.paused: return
+        if self.paused:
+            return
         self.paused = True
         self.player.active = False
 
     def resume_game(self):
-        if not self.paused: return
+        if not self.paused:
+            return
         self.paused = False
         self.player.active = True
 
