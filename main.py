@@ -416,7 +416,9 @@ class App:
                 display_text(adjust_x(30), 70, "Press Q to Quit!")
         else:
             display_text(adjust_x(30), 30, "Oh no! You lost!")
-            display_text(adjust_x(15), 40, f"Press R to restart, and\n{' '*6}try again!")
+            display_text(
+                adjust_x(15), 40, f"Press R to restart, and\n{' '*6}try again!"
+            )
             display_text(adjust_x(30), 60, "Press Q to quit")
 
     def play_death_sound(self):
