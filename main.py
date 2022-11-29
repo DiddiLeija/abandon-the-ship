@@ -179,6 +179,8 @@ class Diddi:
         self.r_facing = True
         self.is_falling = False
         self.has_shooter = False
+        # For debugging purposes only!
+        self.is_invicible = False
         self.aspects = {
             # [D]eath
             "d": [(0, 8) for i in range(3)],
@@ -188,9 +190,12 @@ class Diddi:
             "l": ((8, 8), (16, 8), (24, 8)),
         }
         self.alive = True
+        self.active = False
 
     def update(self):
         if not self.alive:
+            return
+        if not self.active:
             return
         global scroll_x
         last_y = self.y
@@ -245,6 +250,7 @@ class App:
 
         self.winner = False
         self.playing = False
+        self.paused = False
 
         self.setup_menu()
         pyxel.run(self.update, self.draw)
@@ -318,6 +324,9 @@ class App:
     def setup_game(self):
         self.playing = True
         self.player = Diddi()
+        self.player.active = True
+        # For debugging purposes only!
+        # self.player.is_invicible = True
         self.dead_snd = False
 
         # Only call spawn_fire(), because
@@ -327,9 +336,41 @@ class App:
         pyxel.stop()
         pyxel.playm(0, loop=True)
 
+    def restart_game(self):
+        """Resets everything and restarts the game"""
+        global scroll_x
+        self.winner = False
+        self.playing = False
+        self.player = None
+        self.paused = False
+        pyxel.cls(0)
+        scroll_x = 0
+        self.setup_game()
+
+    def pause_game(self):
+        if self.paused:
+            return
+        self.paused = True
+        self.player.active = False
+
+    def resume_game(self):
+        if not self.paused:
+            return
+        self.paused = False
+        self.player.active = True
+
     def update_game(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
+        if pyxel.btnp(pyxel.KEY_R):
+            self.restart_game()
+        if pyxel.btnp(pyxel.KEY_P):
+            if self.player.alive:
+                if self.paused:
+                    self.resume_game()
+                else:
+                    self.pause_game()
+
         self.player.update()
         if self.player.alive:
             for enemy in enemies:
@@ -338,10 +379,13 @@ class App:
                 if abs(self.player.x - enemy.x) < 6:
                     if abs(self.player.y - enemy.y) < 6:
                         if isinstance(enemy, Fire):
-                            self.player.alive = False
-                            self.play_death_sound()
+                            if not self.player.is_invicible:
+                                self.player.alive = False
+                                self.play_death_sound()
                         else:
                             self.winner = True
+                            # ... To disable scrolling calculations
+                            self.player.alive = False
                             self.play_winner_sound()
                         return
                 enemy.update()
@@ -363,9 +407,19 @@ class App:
             pyxel.bltm(0, 0, 1, scroll_x, 0, 128, 128, 0)
             pyxel.camera(scroll_x, 0)
             self.player.draw()
+            for i in enemies:
+                i.draw()
+            if self.paused:
+                display_text(adjust_x(50), 40, "PAUSED!")
+                display_text(adjust_x(30), 50, "Press R to Restart!")
+                display_text(adjust_x(30), 60, "Press P to Resume!")
+                display_text(adjust_x(30), 70, "Press Q to Quit!")
         else:
             display_text(adjust_x(30), 30, "Oh no! You lost!")
-            display_text(adjust_x(0), 40, "Press Q to quit, and try again!")
+            display_text(
+                adjust_x(15), 40, f"Press R to restart, and\n{' '*6}try again!"
+            )
+            display_text(adjust_x(30), 60, "Press Q to quit")
 
     def play_death_sound(self):
         pyxel.stop()
