@@ -24,6 +24,8 @@ Press `Q` whenever you want to exit the game.
 
 - **WASD keys - Arrow keys**: Horizontal movement.
 - **Space**: Jump.
+- **P**: Pause the game.
+- **R**: Restart the game.
 
 ## How to win
 
@@ -31,12 +33,10 @@ Press `Q` whenever you want to exit the game.
 - **Never fall into a pit.** Burning is not the only way to die in this game. Jump to avoid fatal falls.
 - **Reach out the escape pod.** It's located at the other side of the ship. To activate it to escape, just touch the near **purple button**.
 
-### NOTE: Restarting the game
+### Note: Quitting the game using web version
 
-Due to some issues, you cannot restart the game without closing it and trying again [^1]. If you're using the in-browser version, you can just refresh the page. If not, you'll have to close the app/file and run it again.
+There's a small issue with Pyxel's web support. If you try to quit the game, it will just freeze with an error. By now, just close the tab.
 
 ---
 
 And that's it. Have fun!
-
-[^1]: We're currently working to fix that issue. Sorry for the inconvenience.
